@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float swipeThreshold = 50f;
 
     private CharacterController controller;
+    private bool isswiping = false;
 
     void Start()
     {
@@ -38,15 +39,21 @@ public class PlayerMovement : MonoBehaviour
             if (touch.phase == TouchPhase.Began)
             {
                 touchstartpos = touch.position;
+                isswiping = true;
 
             }
-            else if (touch.phase == TouchPhase.Moved)
+            else if (touch.phase == TouchPhase.Moved && isswiping )
             {
                 Vector2 delta = touch.position - touchstartpos;
                 if (Mathf.Abs(delta.x) > swipeThreshold)
                 {
                     horizontalinput = delta.x > 0 ? 1f : -1f;
+                    isswiping = false;
+                }
 
+                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
+                    isswiping = false;
                 }
             }
       
