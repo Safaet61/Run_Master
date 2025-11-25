@@ -9,16 +9,20 @@ public class CrowdSystem : MonoBehaviour
     public float spwanradious = 5f;
     private List<Transform> crowd = new List<Transform>();
 
-    void Start()
+
+    private void Awake()
     {
         addfirst();
-        addfollowers(10);
+    }
+    void Start()
+    {
+    
         
     }
 
 
 
-    void addfollowers(int amount)
+    public void addfollowers(int amount)
     {
         for(int i = 0; i < amount; i++)
         {
@@ -41,8 +45,30 @@ public class CrowdSystem : MonoBehaviour
 
     void addfirst()
     {
-        GameObject firstfollower = Instantiate(follower);
-        firstfollower.transform.SetParent(crowdparent);
-        firstfollower.transform.localPosition = Vector3.zero;
+        
+            foreach (Transform t in crowdparent)
+            {
+                crowd.Add(t);
+
+            }
+        
+
+    }
+    public void removefollower(int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            if (crowd.Count <= 0)
+                return;
+            Transform follower = crowd[crowd.Count - 1];
+            crowd.RemoveAt(crowd.Count - 1);
+            Destroy(follower.gameObject);
+        }
+    }
+    public void multiflyadd(int amount)
+    {
+        int current = crowd.Count;
+        int multifly = current * (amount - 1);
+        addfollowers(amount);
     }
 }
