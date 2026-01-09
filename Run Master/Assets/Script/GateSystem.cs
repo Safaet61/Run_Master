@@ -8,22 +8,25 @@ public class GateSystem : MonoBehaviour
     public enum Gatetype{Add, Minus, Multiply}
     public Gatetype gatetype;
     public int gatevalue;
+    public CrowdSystem cs;
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player"))
             return;
-        CrowdSystem cs = FindObjectOfType<CrowdSystem>();
+
         if (gatetype == Gatetype.Add)
         {
             cs.addfollowers(gatevalue);
             Destroy(gameObject);
         }
+
         else if (gatetype == Gatetype.Minus)
         {
             cs.removefollower(gatevalue);
             Destroy(gameObject);
         }
+
         else if (gatetype == Gatetype.Multiply)
         {
             cs.multiflyadd(gatevalue);

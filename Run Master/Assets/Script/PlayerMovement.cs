@@ -1,77 +1,83 @@
 ﻿using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
-{
+public class PlayerMovement : MonoBehaviour {
     [Header("Movement")]
-    public float speed = 5f;         
-    public float sidespeed = 5f;    
-    public float lerpspeed = 10f;  
 
-    private Vector3 targetpos;
+    public float speed = 5f;
+    public float sidespeed = 5f; 
+    public float lerpspeed = 10f;
 
+    private Vector3 targetpos; 
     private Vector2 touchstartpos;
     public float swipeThreshold = 50f;
-
     private CharacterController controller;
     private bool isswiping = false;
+    public float currentspeed;
+    private bool finished = false;
+    
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-
         targetpos = transform.position;
-    }
+        currentspeed = speed;
+    } 
+    void Update() 
+    { 
 
-    void Update()
-    {
-        getinput();
-        movement();
+        getinput();  
+        movement(); 
     }
-
     void getinput()
     {
-       float horizontalinput = Input.GetAxis("Horizontal");
+        if (finished) return;
+        float horizontalinput = Input.GetAxis("Horizontal");
 
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);
+            Touch touch = Input.GetTouch(0); 
 
             if (touch.phase == TouchPhase.Began)
-            {
-                touchstartpos = touch.position;
-                isswiping = true;
-
-            }
-            else if (touch.phase == TouchPhase.Moved && isswiping )
-            {
-                Vector2 delta = touch.position - touchstartpos;
-                if (Mathf.Abs(delta.x) > swipeThreshold)
+            { touchstartpos = touch.position; isswiping = true;
+            } 
+            else if (touch.phase == TouchPhase.Moved && isswiping) 
+            { Vector2 delta = touch.position - touchstartpos;
+                if (Mathf.Abs(delta.x) > swipeThreshold) 
+                { horizontalinput = delta.x > 0 ? 1f : -1f; isswiping = false; }
+                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) 
                 {
-                    horizontalinput = delta.x > 0 ? 1f : -1f;
-                    isswiping = false;
-                }
-
-                else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                {
-                    isswiping = false;
+                    isswiping = false; 
                 }
             }
-      
-          }
-     
-        targetpos = new Vector3(
-            transform.position.x + horizontalinput * sidespeed * Time.deltaTime,
-            transform.position.y,
-            transform.position.z
-        );
-    }
+        } 
 
-    void movement()
+        targetpos = new Vector3(transform.position.x + horizontalinput * sidespeed * Time.deltaTime, transform.position.y, transform.position.z);
+
+    } 
+
+    void movement() 
     {
         if (controller == null) return;
+        if (finished)
+        {
+            
+                speed = Mathf.MoveTowards(
+                    currentspeed,
+                    0f,
+                    (speed / 10f) * Time.deltaTime
+                );
+            }
 
-        Vector3 move = Vector3.forward * speed;
-        move.x = (targetpos.x - transform.position.x) * lerpspeed; 
+        if (controller == null) return;
+        Vector3 move = Vector3.forward * speed; 
+        move.x = (targetpos.x - transform.position.x) * lerpspeed;
         controller.Move(move * Time.deltaTime);
+
+    } 
+
+    public  void tofinished()
+    {
+        finished = true;
     }
+
 }

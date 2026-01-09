@@ -6,7 +6,6 @@ public class CrowdSystem : MonoBehaviour
 {
     public Transform crowdparent;
     public GameObject follower;
-    public float spwanradious = 5f;
     private List<Transform> crowd = new List<Transform>();
 
 
@@ -34,8 +33,8 @@ public class CrowdSystem : MonoBehaviour
 
         GameObject newfollower = Instantiate(follower);
         newfollower.transform.SetParent(crowdparent );
-        Vector2 circle = Random.insideUnitCircle * spwanradious;
-        Vector3 pos = new Vector3(circle.x, 0, circle.y);
+        Vector3 pos = new Vector3(Random.Range(-0.4f, 0.4f), 0,
+            Random.Range(-0.4f, 0.4f));
         newfollower.transform.localPosition = pos;
         crowd.Add(newfollower.transform);
        
@@ -69,6 +68,6 @@ public class CrowdSystem : MonoBehaviour
     {
         int current = crowd.Count;
         int multifly = current * (amount - 1);
-        addfollowers(amount);
+        addfollowers(multifly);
     }
 }
