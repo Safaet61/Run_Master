@@ -36,6 +36,11 @@ public class CrowdSystem : MonoBehaviour
         Vector3 pos = new Vector3(Random.Range(-0.4f, 0.4f), 0,
             Random.Range(-0.4f, 0.4f));
         newfollower.transform.localPosition = pos;
+        Animator anim = newfollower.GetComponentInChildren<Animator>();
+        if (anim != null)
+        {
+            anim.SetBool("isRunning", true);
+        }
         crowd.Add(newfollower.transform);
        
     }

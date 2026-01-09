@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
     [Header("Movement")]
@@ -7,6 +8,7 @@ public class PlayerMovement : MonoBehaviour {
     public float sidespeed = 5f; 
     public float lerpspeed = 10f;
 
+    private Animator anim;
     private Vector3 targetpos; 
     private Vector2 touchstartpos;
     public float swipeThreshold = 50f;
@@ -14,17 +16,28 @@ public class PlayerMovement : MonoBehaviour {
     private bool isswiping = false;
     public float currentspeed;
     private bool finished = false;
-    
 
+    public CrowdSystem crowdsystem;
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animator>();
+
+
+        if (anim != null)
+        {
+            anim.SetBool("isRunning", true);
+        }
+        else
+        {
+            Debug.LogError("Animator component missing on Player!");
+        }
         targetpos = transform.position;
         currentspeed = speed;
     } 
     void Update() 
     { 
-
+           
         getinput();  
         movement(); 
     }
@@ -53,31 +66,42 @@ public class PlayerMovement : MonoBehaviour {
 
         targetpos = new Vector3(transform.position.x + horizontalinput * sidespeed * Time.deltaTime, transform.position.y, transform.position.z);
 
-    } 
-
-    void movement() 
-    {
-        if (controller == null) return;
-        if (finished)
-        {
-            
-                speed = Mathf.MoveTowards(
-                    currentspeed,
-                    0f,
-                    (speed / 10f) * Time.deltaTime
-                );
-            }
-
-        if (controller == null) return;
-        Vector3 move = Vector3.forward * speed; 
-        move.x = (targetpos.x - transform.position.x) * lerpspeed;
-        controller.Move(move * Time.deltaTime);
-
-    } 
-
-    public  void tofinished()
-    {
-        finished = true;
     }
 
+    void movement()
+    {
+        if (controller == null) return;
+        if (finished) return;
+
+        Vector3 move = Vector3.forward * speed;
+
+        float targetX = targetpos.x;
+        targetX = Mathf.Clamp(targetX, -0.8f, 0.8f);
+        move.x = (targetX - transform.position.x) * lerpspeed;
+        controller.Move(move * Time.deltaTime);
+    }
+    
+    public  void tofinished()
+    {
+       
+        finished = true;
+        anim.SetBool ("isRunning",false);
+ 
+
+        foreach (Transform t in crowdsystem.crowdparent)
+        {
+            Animator anim = t.GetComponentInChildren<Animator>();
+            if (anim != null)
+                anim.SetBool("isRunning", false);
+          
+        }
+        StartCoroutine(StopDelay(2));
+ 
+    }
+    IEnumerator StopDelay(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        speed = 0f;
+ 
+    }
 }

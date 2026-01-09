@@ -22,5 +22,6 @@ public class FinishTrigger : MonoBehaviour
 
         finishLine.SetActive(true);
         Destroy(gameObject);
+     
     }
 }
