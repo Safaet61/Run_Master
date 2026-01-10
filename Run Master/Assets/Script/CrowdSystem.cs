@@ -7,18 +7,14 @@ public class CrowdSystem : MonoBehaviour
     public Transform crowdparent;
     public GameObject follower;
     private List<Transform> crowd = new List<Transform>();
+    private float  radius=0.5f;
 
 
     private void Awake()
     {
         addfirst();
     }
-    void Start()
-    {
-    
-        
-    }
-
+   
 
 
     public void addfollowers(int amount)
@@ -44,8 +40,6 @@ public class CrowdSystem : MonoBehaviour
         crowd.Add(newfollower.transform);
        
     }
-     
-
 
     void addfirst()
     {
@@ -55,7 +49,6 @@ public class CrowdSystem : MonoBehaviour
                 crowd.Add(t);
 
             }
-        
 
     }
     public void removefollower(int amount)

@@ -15,11 +15,12 @@ public class PlayerMovement : MonoBehaviour {
     private CharacterController controller;
     private bool isswiping = false;
     public float currentspeed;
-    private bool finished = false;
+    private bool isFinished;
 
     public CrowdSystem crowdsystem;
     void Start()
     {
+        isFinished = false;
         controller = GetComponent<CharacterController>();
         anim = GetComponentInChildren<Animator>();
 
@@ -43,7 +44,7 @@ public class PlayerMovement : MonoBehaviour {
     }
     void getinput()
     {
-        if (finished) return;
+        if (isFinished) return;
         float horizontalinput = Input.GetAxis("Horizontal");
 
         if (Input.touchCount > 0)
@@ -71,7 +72,7 @@ public class PlayerMovement : MonoBehaviour {
     void movement()
     {
         if (controller == null) return;
-        if (finished) return;
+        if (isFinished) return;
 
         Vector3 move = Vector3.forward * speed;
 
@@ -81,10 +82,10 @@ public class PlayerMovement : MonoBehaviour {
         controller.Move(move * Time.deltaTime);
     }
     
-    public  void tofinished()
+    public  void GameOver()
     {
        
-        finished = true;
+        isFinished = true;
         anim.SetBool ("isRunning",false);
  
 
@@ -93,9 +94,10 @@ public class PlayerMovement : MonoBehaviour {
             Animator anim = t.GetComponentInChildren<Animator>();
             if (anim != null)
                 anim.SetBool("isRunning", false);
-          
+      
         }
         StartCoroutine(StopDelay(2));
+        GameManager.Instance.LevelFinished();
  
     }
     IEnumerator StopDelay(float duration)
