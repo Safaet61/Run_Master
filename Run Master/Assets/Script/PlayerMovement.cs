@@ -14,7 +14,6 @@ public class PlayerMovement : MonoBehaviour {
     public float swipeThreshold = 50f;
     private CharacterController controller;
     private bool isswiping = false;
-    public float currentspeed;
     private bool isFinished;
 
     public CrowdSystem crowdsystem;
@@ -34,7 +33,6 @@ public class PlayerMovement : MonoBehaviour {
             Debug.LogError("Animator component missing on Player!");
         }
         targetpos = transform.position;
-        currentspeed = speed;
     } 
     void Update() 
     { 
@@ -73,12 +71,14 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (controller == null) return;
         if (isFinished) return;
+        if (crowdsystem.follower == null) return;
 
         Vector3 move = Vector3.forward * speed;
 
         float targetX = targetpos.x;
         targetX = Mathf.Clamp(targetX, -0.8f, 0.8f);
         move.x = (targetX - transform.position.x) * lerpspeed;
+        move.y = 0;
         controller.Move(move * Time.deltaTime);
     }
     
@@ -87,8 +87,8 @@ public class PlayerMovement : MonoBehaviour {
        
         isFinished = true;
         anim.SetBool ("isRunning",false);
- 
 
+ 
         foreach (Transform t in crowdsystem.crowdparent)
         {
             Animator anim = t.GetComponentInChildren<Animator>();
@@ -99,7 +99,9 @@ public class PlayerMovement : MonoBehaviour {
         StartCoroutine(StopDelay(2));
         GameManager.Instance.LevelFinished();
  
+    
     }
+   
     IEnumerator StopDelay(float duration)
     {
         yield return new WaitForSeconds(duration);

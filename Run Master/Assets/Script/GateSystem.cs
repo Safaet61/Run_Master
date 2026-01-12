@@ -9,31 +9,31 @@ public class GateSystem : MonoBehaviour
     public Gatetype gatetype;
     public int gatevalue;
     public CrowdSystem cs;
+    private bool used=false;
+
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player"))
-            return;
+        if (used) return;
+        if (!other.CompareTag("Player")) return;
 
-        if (gatetype == Gatetype.Add)
+        used = true;
+
+        switch (gatetype)
         {
-            cs.addfollowers(gatevalue);
-            Destroy(gameObject);
+            case Gatetype.Add:
+                cs.addfollowers(gatevalue);
+                break;
+
+            case Gatetype.Minus:
+                cs.removefollower(gatevalue);
+                break;
+
+            case Gatetype.Multiply:
+                cs.multiflyadd(gatevalue);
+                break;
         }
 
-        else if (gatetype == Gatetype.Minus)
-        {
-            cs.removefollower(gatevalue);
-            Destroy(gameObject);
-        }
-
-        else if (gatetype == Gatetype.Multiply)
-        {
-            cs.multiflyadd(gatevalue);
-            Destroy(gameObject);
-        }
-
+        Destroy(gameObject);
     }
-
-
 }

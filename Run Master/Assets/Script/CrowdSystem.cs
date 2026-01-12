@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,15 +7,12 @@ public class CrowdSystem : MonoBehaviour
     public Transform crowdparent;
     public GameObject follower;
     private List<Transform> crowd = new List<Transform>();
-    private float  radius=0.5f;
 
 
     private void Awake()
     {
         addfirst();
     }
-   
-
 
     public void addfollowers(int amount)
     {
@@ -56,12 +53,32 @@ public class CrowdSystem : MonoBehaviour
         for (int i = 0; i < amount; i++)
         {
             if (crowd.Count <= 0)
-                return;
+                break;
             Transform follower = crowd[crowd.Count - 1];
-            crowd.RemoveAt(crowd.Count - 1);
+            crowd.RemoveAt(crowd.Count - 1);  
             Destroy(follower.gameObject);
         }
+        if (crowd.Count <= 0)
+        {
+            GameManager.Instance.LevelFail();
+        }
     }
+
+
+    public void RemoveSpecificFollower(Transform follower)
+    {
+        if (crowd.Contains(follower))
+        {
+            crowd.Remove(follower);
+            Destroy(follower.gameObject);
+
+            if (crowd.Count <= 0)
+            {
+                GameManager.Instance.LevelFail();
+            }
+        }
+    }
+
     public void multiflyadd(int amount)
     {
         int current = crowd.Count;
