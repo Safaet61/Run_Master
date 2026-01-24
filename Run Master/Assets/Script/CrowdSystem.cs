@@ -48,6 +48,7 @@ public class CrowdSystem : MonoBehaviour
             }
 
     }
+   
     public void removefollower(int amount)
     {
         for (int i = 0; i < amount; i++)
@@ -70,7 +71,7 @@ public class CrowdSystem : MonoBehaviour
         if (crowd.Contains(follower))
         {
             crowd.Remove(follower);
-            Destroy(follower.gameObject);
+            //Destroy(follower.gameObject);
 
             if (crowd.Count <= 0)
             {
